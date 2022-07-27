@@ -1,4 +1,5 @@
-const ENDPOINT = "https://api.publicapis.org/entries";
+// const ENDPOINT = "https://api.publicapis.org/entries";
+const ENDPOINT = "http://127.0.0.1/data.php";
 const closeAllInformation = document.getElementById("close-all-info");
 const CIRCLE_RADIO = 300;
 const TIME_REFRESH = 5000000;
@@ -174,31 +175,20 @@ function init() {
 
 
 
+  getProfiles();
   fillProfilesData();
 }
 
 
-function getJSON(url, callback){
-  var xhr = new XMLHttpRequest();
-  xhr.open("GET", url, true);
-  xhr.responseType = "json";
-
-  xhr.onload = function () {
-    var status = xhr.status;
-
-    if (status == 200) {
-      callback(null, xhr.response);
-    } else {
-      callback(status);
-    }
-  };
-
-  xhr.send();
-};
-getJSON(ENDPOINT, function (err, data) {
-  if (err != null) {
-    console.error(err);
-  } else {
-    console.log(data);
-  }
-});
+function getProfiles(){
+  $.ajax(ENDPOINT, {
+    type: "POST", // http method
+    data: { myData: "This is my data." }, // data to submit
+    success: function (data, status, xhr) {
+      console.log("ajax: status: " + status + ", data: " + data);
+    },
+    error: function (jqXhr, textStatus, errorMessage) {
+      console.log("ajax: Error" + errorMessage);
+    },
+  });
+}
