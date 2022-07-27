@@ -1,5 +1,5 @@
-// const ENDPOINT = "https://api.publicapis.org/entries";
-const ENDPOINT = "http://127.0.0.1/data.php";
+const ENDPOINT = "https://api.publicapis.org/entries";
+// const ENDPOINT = "http://127.0.0.1/data.php";
 const closeAllInformation = document.getElementById("close-all-info");
 const CIRCLE_RADIO = 300;
 const TIME_REFRESH = 5000000;
