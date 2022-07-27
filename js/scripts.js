@@ -1,7 +1,7 @@
 const ENDPOINT = "https://api.publicapis.org/entries";
 const closeAllInformation = document.getElementById("close-all-info");
 const CIRCLE_RADIO = 300;
-const TIME_REFRESH = 50000;
+const TIME_REFRESH = 5000000;
 const ALL_INFORMATION = document.getElementById("allprofiles");
 const BURGLARS = [
   /* Loaded by API  */
