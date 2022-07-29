@@ -1,19 +1,22 @@
-const ENDPOINT = "https://api.publicapis.org/entries";
-// const ENDPOINT = "http://127.0.0.1/data.php";
-const closeAllInformation = document.getElementById("close-all-info");
-const CIRCLE_RADIO = 300;
+const END_POINT_URL = "";
+const TYPE_REQUEST = "GET";
+const CIRCLE_RADIO = 200;
+const ZOOM_MAP = 17;
 const TIME_REFRESH = 5000000;
+
+const closeAllInformation = document.getElementById("close-all-info");
 const ALL_INFORMATION = document.getElementById("allprofiles");
-const BURGLARS = [
-  /* Loaded by API  */
-  [{ lat: 13.6977923, lng: -89.1911526 }, "Objetivo: Nombre A", "11.jpg"],
-  [{ lat: 13.6966823, lng: -89.1902526 }, "Objetivo: Nombre B", "22.jpg"],
-];
+let MOST_WANTED;
+let pointer_img = "./img/ladron.png";
+let map;
+let userLocation;
+let markers = [];
+
 
 const createMap = ({ lat, lng }) => {
   return new google.maps.Map(document.getElementById("map"), {
     center: { lat, lng },
-    zoom: 15,
+    zoom: ZOOM_MAP,
   });
 };
 
@@ -61,8 +64,31 @@ function viewPoinerInfo(i) {
   profileSelected.classList.remove("d-none");
 }
 
-function ShowProfileDetail(){
+function ShowProfileDetail(i){
   Fancybox.show([{ src: "#dialog-content", type: "inline" }]);
+
+  let item = MOST_WANTED[i];
+
+  profile_image = document.getElementById("profile_image");
+  profile_image.style.backgroundImage = "url(" + item.foto_perfil + ")";
+
+  profile_name = document.getElementById("profile_name");
+  profile_name.innerHTML = item.nombre;
+  profile_ak = document.getElementById("profile_ak");
+  profile_ak.innerHTML = item.alias;
+  profile_age = document.getElementById("profile_age");
+  profile_age.innerHTML = item.edad;
+  profile_type = document.getElementById("profile_type");
+  profile_type.innerHTML = item.tipo_organizacion;
+  profile_gang = document.getElementById("profile_gang");
+  profile_gang.innerHTML = item.pandilla;
+  profile_location = document.getElementById("profile_location");
+  profile_location.innerHTML = item.direccion;
+  profile_charact = document.getElementById("profile_charact");
+  profile_charact.innerHTML = item.carac_fisicas;
+  profile_special = document.getElementById("profile_special");
+  profile_special.innerHTML = item.marcas_espec;
+
 }
 
 function showAllProfiles(){
@@ -76,54 +102,55 @@ function showAllProfiles(){
 function fillProfilesData(){
   let list = '';
   let fullList = document.getElementById("fullList");
-  BURGLARS.filter(function (elem, i) {
+
+  MOST_WANTED.filter(function (elem, i) {
 
     list += '<div class="card mt-3 d-none" data-id="'+i+'">';
-          list += '<img onclick="ShowProfileDetail()" src="./img/' + elem[2]+ '" class="card-img-top" alt="...">';
+          list +=
+            '<img onclick="ShowProfileDetail('+i+')" src="' + elem.foto_perfil + '" class="card-img-top" alt="...">';
           list += '<div class="card-body">';
-            list += '<h5 class="card-title text-center">Nombre de persona</h5>';
+            list +=
+              '<h5 class="card-title text-center">' + elem.nombre + " " + elem.apellido +  '</h5>';
             list += '<div class="row">';
               list += '<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">';
                 list += '<p class="text-center">';
-                  list += 'Fecha de nacimiento <br> aaa bbb';
+                  list += "Fecha de nacimiento <br>" + elem.fecha_nacimiento;
                 list += '</p>';
                 list += '<p class="text-center">';
-                  list += 'Departamento <br> aaa bbb';
+                  list += "Departamento <br>" + elem.departamento;
                 list += '</p>';
               list += '</div>';
               list += '<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">';
                 list += '<p class="text-center">';
-                  list += 'Años <br> aaa bbb';
+                  list += "Años <br> " + elem.edad;
                 list += '</p>';
                 list += '<p class="text-center">';
-                  list += 'Colonia <br> aaa bbb';
+                  list += "Colonia <br> " + elem.direccion;
                 list += '</p>';
               list += '</div>';
             list += '</div>';
-            list += '<p onclick="ShowProfileDetail()" class="text-center bg-warning pt-2 pb-2">Alias: aliasDemo</p>';
-            list += '<p class="card-text">Some quick example text to build on the card title and make up the bulk of the cards content.';
+            list +=
+              '<p onclick="ShowProfileDetail('+i+')" class="text-center bg-warning pt-2 pb-2">Alias: ' +elem.alias + "</p>";
+            list += '<p class="card-text">' + elem.carac_fisicas + "</p>";
           list += '</div>';
         list += '</div>';
   });
-        list += list;
-        list += list;
+
   fullList.innerHTML = list;
 }
 
 function init() {
   const initialPosition = { lat: 59.3, lng: 17.7 };
-  const map = createMap(initialPosition);
+  map = createMap(initialPosition);
   const marker = createMarker({ map, position: initialPosition });
   const $info = document.getElementById("info");
-  let userLocation;
+
 
   let watchId = trackLocation({
     onSuccess: ({ coords: { latitude: lat, longitude: lng } }) => {
       marker.setPosition({ lat, lng });
       userLocation = { lat, lng };
       map.panTo({ lat, lng });
-      // $info.appendChild( `Lat: ${lat.toFixed(5)} Lng: ${lng.toFixed(5)}` );
-      // $info.classList.remove('error');
 
       cityCircle = new google.maps.Circle({
         strokeColor: "#FF0000",
@@ -136,33 +163,9 @@ function init() {
         radius: CIRCLE_RADIO,
       });
 
-      /* Targets */
-      let image = "./img/ladron.png";
+      getProfiles();
 
-      BURGLARS.filter(function (elem, i) {
-        // let location = { lat: elem[0].lat, lng: elem[0].lng };
-        let location = {
-          lat: userLocation.lat + i / Math.random() / 1779,
-          lng: userLocation.lng + i / Math.random() / 1347,
-        };
 
-        let infowindow = new google.maps.InfoWindow({
-          content:
-            "<div class=infowindow><h1>Leeds</h1><p>Population: 715,402</p></div>",
-        });
-        pointer = new google.maps.Marker({
-          position: location,
-          map,
-          title: elem[1],
-          icon: image,
-          content: infowindow,
-          animation: google.maps.Animation.DROP,
-        });
-
-        pointer.addListener("click", () => {
-          viewPoinerInfo(i);
-        });
-      });
     },
     onError: (err) => {
       console.log($info);
@@ -175,20 +178,171 @@ function init() {
 
 
 
-  getProfiles();
-  fillProfilesData();
+}
+
+function setPointsForUser(){
+  MOST_WANTED.filter(function (elem, i) {
+
+    let location = {
+      lat: parseFloat(elem.latitud),
+      lng: parseFloat(elem.longitud),
+    };
+
+    let infowindow = new google.maps.InfoWindow({
+      content:
+        "<div class=infowindow><h1>" + elem.nombre + "</h1></div>",
+    });
+    pointer = new google.maps.Marker({
+      position: location,
+      map,
+      title: elem.nombre + " " + elem.apellido,
+      icon: pointer_img,
+      content: infowindow,
+      animation: google.maps.Animation.DROP,
+    });
+
+    pointer.addListener("click", () => {
+      viewPoinerInfo(i);
+    });
+
+    markers.push(pointer);
+  });
 }
 
 
 function getProfiles(){
-  $.ajax(ENDPOINT, {
-    type: "POST", // http method
-    data: { myData: "This is my data." }, // data to submit
+  let required_positions = calculate_coords();
+
+  $.ajax(END_POINT_URL, {
+    type: TYPE_REQUEST,
+    data: required_positions,
     success: function (data, status, xhr) {
-      console.log("ajax: status: " + status + ", data: " + data);
+      MOST_WANTED = data.area;
+      if (MOST_WANTED) {
+        fillProfilesData();
+        setPointsForUser();
+      }
     },
     error: function (jqXhr, textStatus, errorMessage) {
       console.log("ajax: Error" + errorMessage);
     },
   });
+}
+
+function calculate_coords(side){
+
+  if (side=="CORNER") {
+
+    const item = 155500;
+
+    distanceA = parseFloat(userLocation.lat + CIRCLE_RADIO / item);
+    distanceb = parseFloat(userLocation.lng - CIRCLE_RADIO / item);
+
+    let cc_one = {
+      lat: distanceA,
+      lng: distanceb,
+    };
+
+    pointer = new google.maps.Marker({
+      position: cc_one,
+      map,
+    });
+
+    distanceA = parseFloat(userLocation.lat + CIRCLE_RADIO / item);
+    distanceb = parseFloat(userLocation.lng + CIRCLE_RADIO / item);
+
+    let cc_two = {
+      lat: distanceA,
+      lng: distanceb,
+    };
+
+    pointer = new google.maps.Marker({
+      position: cc_two,
+      map,
+    });
+
+    distanceA = parseFloat(userLocation.lat - CIRCLE_RADIO / item);
+    distanceb = parseFloat(userLocation.lng - CIRCLE_RADIO / item);
+
+    let coords_three = {
+      lat: distanceA,
+      lng: distanceb,
+    };
+
+    pointer = new google.maps.Marker({
+      position: coords_three,
+      map,
+    });
+
+    distanceA = parseFloat(userLocation.lat - CIRCLE_RADIO / item);
+    distanceb = parseFloat(userLocation.lng + CIRCLE_RADIO / item);
+
+    let coords_four = {
+      lat: distanceA,
+      lng: distanceb,
+    };
+
+    pointer = new google.maps.Marker({
+      position: coords_four,
+      map,
+    });
+  }else{
+    const item = 111000;
+
+    distanceA = parseFloat(userLocation.lat + CIRCLE_RADIO / item);
+    distanceb = parseFloat(userLocation.lng);
+
+    let coords_uno = { lat: distanceA, lng: distanceb };
+
+    /*
+    pointer = new google.maps.Marker({
+      position: coords_uno,
+      map,
+    });
+    */
+
+    distanceA = parseFloat(userLocation.lat);
+    distanceb = parseFloat(userLocation.lng + CIRCLE_RADIO / item);
+
+    let coords_dos = { lat: distanceA, lng: distanceb };
+
+    /*
+    pointer = new google.maps.Marker({
+      position: coords_dos,
+      map,
+    });
+    */
+
+    distanceA = parseFloat(userLocation.lat - CIRCLE_RADIO / item);
+    distanceb = parseFloat(userLocation.lng);
+
+    let coords_tres = { lat: distanceA, lng: distanceb };
+
+    /*
+    pointer = new google.maps.Marker({
+      position: coords_tres,
+      map,
+    });
+    */
+
+    distanceA = parseFloat(userLocation.lat);
+    distanceb = parseFloat(userLocation.lng - CIRCLE_RADIO / item);
+
+    let coords_cuatro = { lat: distanceA, lng: distanceb };
+
+    /*
+    pointer = new google.maps.Marker({
+      position: coords_cuatro,
+      map,
+    });
+    */
+
+
+    return {
+      LatIni : coords_uno,
+      LatFin : coords_dos,
+      LonIni : coords_tres,
+      LonFin : coords_cuatro
+    }
+  }
 }

@@ -12,9 +12,17 @@
 
   <body>
     <main>
-      <p id="info" class="info">
-        <img src="./img/logo.jpg" alt="Logo de organización" id="logo">
-      </p>
+      <div class="row top-container text-white p-3" >
+        <div class="col-12 col-sm-4 col-md-4 col-lg-4">
+          <img src="./img/logo.jpg" alt="Logo de organización" class="img-fluid mx-auto d-block" >
+        </div>
+        <div class="col-12 col-sm-6 col-md-6 col-lg-6">
+          <p class="text-center text-md-start pt-3" >
+            Aquí estan las instrucciones para el usuario aquí estan las instrucciones para el usuario para el usuario aquí estan las instrucciones para el usuario
+          </p>
+        </div>
+
+      </div>
       <div id="map" class="map"></div>
       <div class="fixed-bottom footer row pt-3">
         <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
@@ -41,13 +49,42 @@
         </div>
       </div>
       <div id="dialog-content">
-        <img width="50%"
-          src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iNzUycHQiIGhlaWdodD0iNzUycHQiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDc1MiA3NTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiA8cGF0aCBkPSJtMzc2IDU4OS44NGMxMTcuOTEgMCAyMTMuODQtOTUuOTI2IDIxMy44NC0yMTMuODQgMC0xMTcuOTEtOTUuOTMtMjEzLjgzLTIxMy44NC0yMTMuODMtMTE3LjkxIDAtMjEzLjgzIDk1LjkyNi0yMTMuODMgMjEzLjgzczk1LjkyMiAyMTMuODQgMjEzLjgzIDIxMy44NHptLTEyMi4wOS02Ny4yMjNjMy44MjQyLTQ3LjI3MyAzOC4xNzYtNjUuMTM3IDEyMi4wOS02NS4xMzcgODMuOTE0IDAgMTE4LjI4IDE3Ljg1NSAxMjIuMDkgNjUuMTI5LTMzLjEyMSAyNy42MjktNzUuNjkxIDQ0LjI4OS0xMjIuMSA0NC4yODktNDYuNDAyIDAtODguOTczLTE2LjY1Ni0xMjIuMDktNDQuMjgxem01My45MzgtMTU2LjIzYzAtMzcuNTgyIDMwLjU3NC02OC4xNTIgNjguMTU2LTY4LjE1MnM2OC4xNTYgMzAuNTc0IDY4LjE1NiA2OC4xNTJjMCAzNy41ODItMzAuNTc0IDY4LjE1Ni02OC4xNTYgNjguMTU2LTM3LjU4Mi0wLjAwMzkwNy02OC4xNTYtMzAuNTc0LTY4LjE1Ni02OC4xNTZ6bTY4LjE1Mi0xODEuMjhjMTA1LjI2IDAgMTkwLjkgODUuNjMzIDE5MC45IDE5MC44OSAwIDQ4LjkzLTE4LjUyMyA5My41OTQtNDguODk4IDEyNy40MS0xMS4yMjctNDMuOTY1LTQ4Ljg5NS01OS44ODctODUuNjI5LTY1LjYxNyAyMS4xMDUtMTYuNjk1IDM0LjcxNS00Mi40NzMgMzQuNzE1LTcxLjQxIDAtNTAuMjIzLTQwLjg2My05MS4wODYtOTEuMDg2LTkxLjA4NnMtOTEuMDg2IDQwLjg2My05MS4wODYgOTEuMDg2YzAgMjguOTQxIDEzLjYwNSA1NC43MTUgMzQuNzE1IDcxLjQxLTM2LjczNCA1LjczNDQtNzQuMzk4IDIxLjY0OC04NS42MjkgNjUuNjI1LTMwLjM3NS0zMy44Mi00OC44OTgtNzguNDg4LTQ4Ljg5OC0xMjcuNDIgMC0xMDUuMjcgODUuNjQxLTE5MC45IDE5MC44OS0xOTAuOXoiLz4KPC9zdmc+Cg=="
-          alt="">
-        <h4 id="target-name"></h4>
-        <p>
-          Esta es una descripciónesta es una descripción esta es una descripción esta es una descripción.
-        </p>
+        <h4 class="text-center" >Detalles</h4>
+        <div id="profile_image"></div>
+        <table id="modal-details" width="100%">
+          <tr>
+            <th width="40%" >Nombre :</th>
+            <td id="profile_name" ></td>
+          </tr>
+          <tr>
+            <th width="40%" >Alias :</th>
+            <td id="profile_ak" ></td>
+          </tr>
+          <tr>
+            <th width="40%" >Años :</th>
+            <td id="profile_age" ></td>
+          </tr>
+          <tr>
+            <th width="40%" >Tipo de organización :</th>
+            <td id="profile_type" ></td>
+          </tr>
+          <tr>
+            <th width="40%" >Pandilla :</th>
+            <td id="profile_gang" ></td>
+          </tr>
+          <tr>
+            <th width="40%" >Residencia :</th>
+            <td id="profile_location" ></td>
+          </tr>
+          <tr>
+            <th width="40%" >Caract. físicas :</th>
+            <td id="profile_charact" ></td>
+          </tr>
+          <tr>
+            <th width="40%" >Señales especiales :</th>
+            <td id="profile_special" ></td>
+          </tr>
+        </table>
       </div>
       <script src="./js/scripts.js"></script>
     </main>
