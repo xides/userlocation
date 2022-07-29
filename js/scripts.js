@@ -1,4 +1,5 @@
-const END_POINT_URL = "";
+const DOMAIN = "";
+const END_POINT_URL = DOMAIN + "/api/area/";
 const TYPE_REQUEST = "GET";
 const CIRCLE_RADIO = 200;
 const ZOOM_MAP = 17;
@@ -209,11 +210,90 @@ function setPointsForUser(){
   });
 }
 
+function calculate_coords(side) {
+  if (side == "CORNER") {
+    const item = 155500;
+
+    distanceA = parseFloat(userLocation.lat + CIRCLE_RADIO / item);
+    distanceb = parseFloat(userLocation.lng - CIRCLE_RADIO / item);
+
+    let coords_one = { lat: distanceA, lng: distanceb };
+
+    /*
+    pointer = new google.maps.Marker({ position: cc_one, map, });
+    */
+
+
+    distanceA = parseFloat(userLocation.lat + CIRCLE_RADIO / item);
+    distanceb = parseFloat(userLocation.lng + CIRCLE_RADIO / item);
+
+    let coords_two = { lat: distanceA, lng: distanceb };
+
+
+
+    distanceA = parseFloat(userLocation.lat - CIRCLE_RADIO / item);
+    distanceb = parseFloat(userLocation.lng - CIRCLE_RADIO / item);
+
+    let coords_three = { lat: distanceA, lng: distanceb };
+
+
+
+    distanceA = parseFloat(userLocation.lat - CIRCLE_RADIO / item);
+    distanceb = parseFloat(userLocation.lng + CIRCLE_RADIO / item);
+
+    let coords_four = { lat: distanceA, lng: distanceb };
+
+  } else {
+    const item = 111000;
+
+    distanceA = parseFloat(userLocation.lat + CIRCLE_RADIO / item);
+    distanceb = parseFloat(userLocation.lng);
+
+    let coords_one = { lat: distanceA, lng: distanceb }; // Y +
+
+
+    distanceA = parseFloat(userLocation.lat);
+    distanceb = parseFloat(userLocation.lng + CIRCLE_RADIO / item);
+
+    let coords_two = { lat: distanceA, lng: distanceb }; // X +
+
+
+    distanceA = parseFloat(userLocation.lat - CIRCLE_RADIO / item);
+    distanceb = parseFloat(userLocation.lng);
+
+    let coords_three = { lat: distanceA, lng: distanceb }; // Y -
+
+
+
+    distanceA = parseFloat(userLocation.lat);
+    distanceb = parseFloat(userLocation.lng - CIRCLE_RADIO / item);
+
+    let coords_four = { lat: distanceA, lng: distanceb }; // X -
+
+
+    return {
+      LatIni: coords_one,
+      LatFin: coords_two,
+      LonIni: coords_three,
+      LonFin: coords_four,
+    };
+  }
+}
 
 function getProfiles(){
   let required_positions = calculate_coords();
+  let final_url =
+    END_POINT_URL +
+    +required_positions.LatIni.lat +
+    "/" +
+    required_positions.LatFin.lng +
+    "/" +
+    required_positions.LonIni.lat +
+    "/" +
+    required_positions.LonFin.lng;
+console.log(final_url);
 
-  $.ajax(END_POINT_URL, {
+  $.ajax(final_url, {
     type: TYPE_REQUEST,
     data: required_positions,
     success: function (data, status, xhr) {
@@ -227,122 +307,4 @@ function getProfiles(){
       console.log("ajax: Error" + errorMessage);
     },
   });
-}
-
-function calculate_coords(side){
-
-  if (side=="CORNER") {
-
-    const item = 155500;
-
-    distanceA = parseFloat(userLocation.lat + CIRCLE_RADIO / item);
-    distanceb = parseFloat(userLocation.lng - CIRCLE_RADIO / item);
-
-    let cc_one = {
-      lat: distanceA,
-      lng: distanceb,
-    };
-
-    pointer = new google.maps.Marker({
-      position: cc_one,
-      map,
-    });
-
-    distanceA = parseFloat(userLocation.lat + CIRCLE_RADIO / item);
-    distanceb = parseFloat(userLocation.lng + CIRCLE_RADIO / item);
-
-    let cc_two = {
-      lat: distanceA,
-      lng: distanceb,
-    };
-
-    pointer = new google.maps.Marker({
-      position: cc_two,
-      map,
-    });
-
-    distanceA = parseFloat(userLocation.lat - CIRCLE_RADIO / item);
-    distanceb = parseFloat(userLocation.lng - CIRCLE_RADIO / item);
-
-    let coords_three = {
-      lat: distanceA,
-      lng: distanceb,
-    };
-
-    pointer = new google.maps.Marker({
-      position: coords_three,
-      map,
-    });
-
-    distanceA = parseFloat(userLocation.lat - CIRCLE_RADIO / item);
-    distanceb = parseFloat(userLocation.lng + CIRCLE_RADIO / item);
-
-    let coords_four = {
-      lat: distanceA,
-      lng: distanceb,
-    };
-
-    pointer = new google.maps.Marker({
-      position: coords_four,
-      map,
-    });
-  }else{
-    const item = 111000;
-
-    distanceA = parseFloat(userLocation.lat + CIRCLE_RADIO / item);
-    distanceb = parseFloat(userLocation.lng);
-
-    let coords_uno = { lat: distanceA, lng: distanceb };
-
-    /*
-    pointer = new google.maps.Marker({
-      position: coords_uno,
-      map,
-    });
-    */
-
-    distanceA = parseFloat(userLocation.lat);
-    distanceb = parseFloat(userLocation.lng + CIRCLE_RADIO / item);
-
-    let coords_dos = { lat: distanceA, lng: distanceb };
-
-    /*
-    pointer = new google.maps.Marker({
-      position: coords_dos,
-      map,
-    });
-    */
-
-    distanceA = parseFloat(userLocation.lat - CIRCLE_RADIO / item);
-    distanceb = parseFloat(userLocation.lng);
-
-    let coords_tres = { lat: distanceA, lng: distanceb };
-
-    /*
-    pointer = new google.maps.Marker({
-      position: coords_tres,
-      map,
-    });
-    */
-
-    distanceA = parseFloat(userLocation.lat);
-    distanceb = parseFloat(userLocation.lng - CIRCLE_RADIO / item);
-
-    let coords_cuatro = { lat: distanceA, lng: distanceb };
-
-    /*
-    pointer = new google.maps.Marker({
-      position: coords_cuatro,
-      map,
-    });
-    */
-
-
-    return {
-      LatIni : coords_uno,
-      LatFin : coords_dos,
-      LonIni : coords_tres,
-      LonFin : coords_cuatro
-    }
-  }
 }
