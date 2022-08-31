@@ -1,23 +1,18 @@
-const DOMAIN = "";
-const END_POINT_URL = DOMAIN + "/api/area/";
-const TYPE_REQUEST = "GET";
-const CIRCLE_RADIO = 200;
-const ZOOM_MAP = 17;
-const TIME_REFRESH = 5000000;
-
+const ENDPOINT = "https://api.publicapis.org/entries";
 const closeAllInformation = document.getElementById("close-all-info");
+const CIRCLE_RADIO = 300;
+const TIME_REFRESH = 99999;
 const ALL_INFORMATION = document.getElementById("allprofiles");
-let MOST_WANTED;
-let pointer_img = "./img/ladron.png";
-let map;
-let userLocation;
-let markers = [];
-
+const BURGLARS = [
+  /* Loaded by API  */
+  [{ lat: 13.6977923, lng: -89.1911526 }, "Nombre de Prueba A", "11.jpg"],
+  [{ lat: 13.6966823, lng: -89.1902526 }, "Nombre de Prueba B", "22.jpg"],
+];
 
 const createMap = ({ lat, lng }) => {
   return new google.maps.Map(document.getElementById("map"), {
     center: { lat, lng },
-    zoom: ZOOM_MAP,
+    zoom: 15,
   });
 };
 
@@ -68,27 +63,27 @@ function viewPoinerInfo(i) {
 function ShowProfileDetail(i){
   Fancybox.show([{ src: "#dialog-content", type: "inline" }]);
 
-  let item = MOST_WANTED[i];
+  let item = BURGLARS[i];
 
   profile_image = document.getElementById("profile_image");
-  profile_image.style.backgroundImage = "url(" + item.foto_perfil + ")";
+  profile_image.style.backgroundImage = "url(./img/" + item[2] + ")";
 
   profile_name = document.getElementById("profile_name");
-  profile_name.innerHTML = item.nombre;
+  profile_name.innerHTML = item[1];
   profile_ak = document.getElementById("profile_ak");
-  profile_ak.innerHTML = item.alias;
+  profile_ak.innerHTML = 'Lorem ipsum dolor sit';
   profile_age = document.getElementById("profile_age");
-  profile_age.innerHTML = item.edad;
+  profile_age.innerHTML = 'Tempor incididunt ut ';
   profile_type = document.getElementById("profile_type");
-  profile_type.innerHTML = item.tipo_organizacion;
+  profile_type.innerHTML = 'Quis nostrud exercita';
   profile_gang = document.getElementById("profile_gang");
-  profile_gang.innerHTML = item.pandilla;
+  profile_gang.innerHTML = 'Consequat. Duis aute ';
   profile_location = document.getElementById("profile_location");
-  profile_location.innerHTML = item.direccion;
+  profile_location.innerHTML = 'Cillum dolore eu fugi';
   profile_charact = document.getElementById("profile_charact");
-  profile_charact.innerHTML = item.carac_fisicas;
+  profile_charact.innerHTML = 'Proident, sunt in cul';
   profile_special = document.getElementById("profile_special");
-  profile_special.innerHTML = item.marcas_espec;
+  profile_special.innerHTML = 'Quis nostrud exercita';
 
 }
 
@@ -103,55 +98,54 @@ function showAllProfiles(){
 function fillProfilesData(){
   let list = '';
   let fullList = document.getElementById("fullList");
-
-  MOST_WANTED.filter(function (elem, i) {
+  BURGLARS.filter(function (elem, i) {
 
     list += '<div class="card mt-3 d-none" data-id="'+i+'">';
-          list +=
-            '<img onclick="ShowProfileDetail('+i+')" src="' + elem.foto_perfil + '" class="card-img-top" alt="...">';
+          list += '<img onclick="ShowProfileDetail('+i+')" src="./img/' + elem[2]+ '" class="card-img-top" alt="...">';
           list += '<div class="card-body">';
-            list +=
-              '<h5 class="card-title text-center">' + elem.nombre + " " + elem.apellido +  '</h5>';
+            list += '<h5 class="card-title text-center">'+elem[1]+'</h5>';
             list += '<div class="row">';
               list += '<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">';
                 list += '<p class="text-center">';
-                  list += "Fecha de nacimiento <br>" + elem.fecha_nacimiento;
+                  list += 'Fecha de nacimiento <br> aaa bbb';
                 list += '</p>';
                 list += '<p class="text-center">';
-                  list += "Departamento <br>" + elem.departamento;
+                  list += 'Departamento <br> aaa bbb';
                 list += '</p>';
               list += '</div>';
               list += '<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">';
                 list += '<p class="text-center">';
-                  list += "Años <br> " + elem.edad;
+                  list += 'Años <br> aaa bbb';
                 list += '</p>';
                 list += '<p class="text-center">';
-                  list += "Colonia <br> " + elem.direccion;
+                  list += 'Colonia <br> aaa bbb';
                 list += '</p>';
               list += '</div>';
             list += '</div>';
-            list +=
-              '<p onclick="ShowProfileDetail('+i+')" class="text-center bg-warning pt-2 pb-2">Alias: ' +elem.alias + "</p>";
-            list += '<p class="card-text">' + elem.carac_fisicas + "</p>";
+            list += '<p onclick="ShowProfileDetail('+i+')" class="text-center bg-warning pt-2 pb-2">Alias: aliasDemo</p>';
+            list += '<p class="card-text">Some quick example text to build on the card title and make up the bulk of the cards content.';
           list += '</div>';
         list += '</div>';
   });
-
+        list += list;
+        list += list;
   fullList.innerHTML = list;
 }
 
 function init() {
   const initialPosition = { lat: 59.3, lng: 17.7 };
-  map = createMap(initialPosition);
+  const map = createMap(initialPosition);
   const marker = createMarker({ map, position: initialPosition });
   const $info = document.getElementById("info");
-
+  let userLocation;
 
   let watchId = trackLocation({
     onSuccess: ({ coords: { latitude: lat, longitude: lng } }) => {
       marker.setPosition({ lat, lng });
       userLocation = { lat, lng };
       map.panTo({ lat, lng });
+      // $info.appendChild( `Lat: ${lat.toFixed(5)} Lng: ${lng.toFixed(5)}` );
+      // $info.classList.remove('error');
 
       cityCircle = new google.maps.Circle({
         strokeColor: "#FF0000",
@@ -164,9 +158,33 @@ function init() {
         radius: CIRCLE_RADIO,
       });
 
-      getProfiles();
+      /* Targets */
+      let image = "./img/ladron.png";
 
+      BURGLARS.filter(function (elem, i) {
+        // let location = { lat: elem[0].lat, lng: elem[0].lng };
+        let location = {
+          lat: userLocation.lat + i / Math.random() / 1779,
+          lng: userLocation.lng + i / Math.random() / 1347,
+        };
 
+        let infowindow = new google.maps.InfoWindow({
+          content:
+            "<div class=infowindow><h1>Leeds</h1><p>Population: 715,402</p></div>",
+        });
+        pointer = new google.maps.Marker({
+          position: location,
+          map,
+          title: elem[1],
+          icon: image,
+          content: infowindow,
+          animation: google.maps.Animation.DROP,
+        });
+
+        pointer.addListener("click", () => {
+          viewPoinerInfo(i);
+        });
+      });
     },
     onError: (err) => {
       console.log($info);
@@ -179,132 +197,31 @@ function init() {
 
 
 
+  fillProfilesData();
 }
 
-function setPointsForUser(){
-  MOST_WANTED.filter(function (elem, i) {
 
-    let location = {
-      lat: parseFloat(elem.latitud),
-      lng: parseFloat(elem.longitud),
-    };
+function getJSON(url, callback){
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", url, true);
+  xhr.responseType = "json";
 
-    let infowindow = new google.maps.InfoWindow({
-      content:
-        "<div class=infowindow><h1>" + elem.nombre + "</h1></div>",
-    });
-    pointer = new google.maps.Marker({
-      position: location,
-      map,
-      title: elem.nombre + " " + elem.apellido,
-      icon: pointer_img,
-      content: infowindow,
-      animation: google.maps.Animation.DROP,
-    });
+  xhr.onload = function () {
+    var status = xhr.status;
 
-    pointer.addListener("click", () => {
-      viewPoinerInfo(i);
-    });
+    if (status == 200) {
+      callback(null, xhr.response);
+    } else {
+      callback(status);
+    }
+  };
 
-    markers.push(pointer);
-  });
-}
-
-function calculate_coords(side) {
-  if (side == "CORNER") {
-    const item = 155500;
-
-    distanceA = parseFloat(userLocation.lat + CIRCLE_RADIO / item);
-    distanceb = parseFloat(userLocation.lng - CIRCLE_RADIO / item);
-
-    let coords_one = { lat: distanceA, lng: distanceb };
-
-    /*
-    pointer = new google.maps.Marker({ position: cc_one, map, });
-    */
-
-
-    distanceA = parseFloat(userLocation.lat + CIRCLE_RADIO / item);
-    distanceb = parseFloat(userLocation.lng + CIRCLE_RADIO / item);
-
-    let coords_two = { lat: distanceA, lng: distanceb };
-
-
-
-    distanceA = parseFloat(userLocation.lat - CIRCLE_RADIO / item);
-    distanceb = parseFloat(userLocation.lng - CIRCLE_RADIO / item);
-
-    let coords_three = { lat: distanceA, lng: distanceb };
-
-
-
-    distanceA = parseFloat(userLocation.lat - CIRCLE_RADIO / item);
-    distanceb = parseFloat(userLocation.lng + CIRCLE_RADIO / item);
-
-    let coords_four = { lat: distanceA, lng: distanceb };
-
+  xhr.send();
+};
+getJSON(ENDPOINT, function (err, data) {
+  if (err != null) {
+    console.error(err);
   } else {
-    const item = 111000;
-
-    distanceA = parseFloat(userLocation.lat + CIRCLE_RADIO / item);
-    distanceb = parseFloat(userLocation.lng);
-
-    let coords_one = { lat: distanceA, lng: distanceb }; // Y +
-
-
-    distanceA = parseFloat(userLocation.lat);
-    distanceb = parseFloat(userLocation.lng + CIRCLE_RADIO / item);
-
-    let coords_two = { lat: distanceA, lng: distanceb }; // X +
-
-
-    distanceA = parseFloat(userLocation.lat - CIRCLE_RADIO / item);
-    distanceb = parseFloat(userLocation.lng);
-
-    let coords_three = { lat: distanceA, lng: distanceb }; // Y -
-
-
-
-    distanceA = parseFloat(userLocation.lat);
-    distanceb = parseFloat(userLocation.lng - CIRCLE_RADIO / item);
-
-    let coords_four = { lat: distanceA, lng: distanceb }; // X -
-
-
-    return {
-      LatIni: coords_one,
-      LatFin: coords_two,
-      LonIni: coords_three,
-      LonFin: coords_four,
-    };
+    console.log(data);
   }
-}
-
-function getProfiles(){
-  let required_positions = calculate_coords();
-  let final_url =
-    END_POINT_URL +
-    +required_positions.LatIni.lat +
-    "/" +
-    required_positions.LatFin.lng +
-    "/" +
-    required_positions.LonIni.lat +
-    "/" +
-    required_positions.LonFin.lng;
-console.log(final_url);
-
-  $.ajax(final_url, {
-    type: TYPE_REQUEST,
-    data: required_positions,
-    success: function (data, status, xhr) {
-      MOST_WANTED = data.area;
-      if (MOST_WANTED) {
-        fillProfilesData();
-        setPointsForUser();
-      }
-    },
-    error: function (jqXhr, textStatus, errorMessage) {
-      console.log("ajax: Error" + errorMessage);
-    },
-  });
-}
+});
